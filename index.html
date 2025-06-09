@@ -1,0 +1,211 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cửa Hàng Linh Kiện Máy Tính</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .product-card:hover img {
+            transform: scale(1.05);
+            transition: transform 0.3s ease-in-out;
+        }
+        .product-card {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-200 via-blue-200 to-pink-200 min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-gradient-to-r from-indigo-700 to-purple-700 text-white py-4 fixed top-0 w-full z-10 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center px-4">
+            <h1 class="text-2xl font-bold">TechStore</h1>
+            <ul class="flex space-x-6">
+                <li><a href="#" class="hover:text-yellow-300 transition">Trang chủ</a></li>
+                <li><a href="#" class="hover:text-yellow-300 transition">Sản phẩm</a></li>
+                <li><a href="#" class="hover:text-yellow-300 transition">Liên hệ</a></li>
+                <li><a href="#" class="hover:text-yellow-300 transition">Giỏ hàng</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16 mt-16">
+        <div class="container mx-auto text-center">
+            <h1 class="text-5xl font-bold animate-fade-in">Cửa Hàng Linh Kiện Máy Tính</h1>
+            <p class="mt-4 text-xl animate-fade-in-delay">Khám phá linh kiện chất lượng với giá tốt nhất!</p>
+            <a href="#products" class="mt-6 inline-block bg-yellow-400 text-white py-3 px-6 rounded-full hover:bg-yellow-500 transition">Xem ngay</a>
+        </div>
+    </header>
+
+    <!-- Promotional Banner -->
+    <section class="bg-gradient-to-r from-pink-500 to-yellow-500 text-white py-8">
+        <div class="container mx-auto text-center">
+            <h3 class="text-3xl font-bold">Ưu Đãi Đặc Biệt!</h3>
+            <p class="mt-2 text-lg">Giảm giá lên đến 20% cho tất cả linh kiện từ nay đến hết tháng!</p>
+            <a href="#products" class="mt-4 inline-block bg-white text-pink-600 py-2 px-6 rounded-full hover:bg-gray-100 transition">Mua ngay</a>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main id="products" class="container mx-auto py-12">
+        <h2 class="text-4xl font-semibold text-center text-indigo-800 mb-10">Sản Phẩm Nổi Bật</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            <!-- Product Card 1: CPU -->
+            <div class="product-card bg-white rounded-xl shadow-2xl p-6 relative transform hover:-translate-y-2 transition duration-500">
+                <div class="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">Hot</div>
+                <img src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea" alt="CPU" class="w-full h-56 object-cover rounded-lg">
+                <h3 class="text-2xl font-bold mt-4 text-blue-600">CPU Intel Core i9</h3>
+                <p class="text-gray-600 mt-2">Hiệu năng vượt trội, xung nhịp lên đến 5.3GHz.</p>
+                <p class="text-xl font-semibold mt-3 text-green-600">12.000.000 VNĐ</p>
+                <button class="mt-4 w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition flex items-center justify-center">
+                    <i class="fas fa-cart-plus mr-2"></i> Thêm vào giỏ
+                </button>
+            </div>
+            <!-- Product Card 2: GPU -->
+            <div class="product-card bg-white rounded-xl shadow-2xl p-6 relative transform hover:-translate-y-2 transition duration-500">
+                <div class="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">Hot</div>
+                <img src="https://images.unsplash.com/photo-1591489378242-1d7272b5b24c" alt="GPU" class="w-full h-56 object-cover rounded-lg">
+                <h3 class="text-2xl font-bold mt-4 text-red-600">GPU NVIDIA RTX 3080</h3>
+                <p class="text-gray-600 mt-2">Card đồ họa mạnh mẽ cho chơi game 4K.</p>
+                <p class="text-xl font-semibold mt-3 text-green-600">18.500.000 VNĐ</p>
+                <button class="mt-4 w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-lg hover:from-red-600 hover:to-red-700 transition flex items-center justify-center">
+                    <i class="fas fa-cart-plus mr-2"></i> Thêm vào giỏ
+                </button>
+            </div>
+            <!-- Product Card 3: RAM -->
+            <div class="product-card bg-white rounded-xl shadow-2xl p-6 relative transform hover:-translate-y-2 transition duration-500">
+                <img src="https://images.unsplash.com/photo-1620802051735-3f941966b46f" alt="RAM" class="w-full h-56 object-cover rounded-lg">
+                <h3 class="text-2xl font-bold mt-4 text-purple-600">RAM 32GB DDR4</h3>
+                <p class="text-gray-600 mt-2">Tốc độ cao, lý tưởng cho đa nhiệm.</p>
+                <p class="text-xl font-semibold mt-3 text-green-600">3.200.000 VNĐ</p>
+                <button class="mt-4 w-full bg-gradient-to-r from-purple-500 to-purple-600 to text-white py-3 rounded-lg hover:from-purple-600 hover:to-purple-700 transition flex items-center justify-center">
+                    <i class="fas fa-cart-plus mr-2"></i> Thêm vào giỏ
+                </button>
+            </div>
+            <!-- Product Card 4: SSD -->
+            <div class="product-card bg-white rounded-xl shadow-2xl p-6 relative transform hover:-translate-y-2 transition duration-500">
+                <img src="https://images.unsplash.com/photo-1595701556932-adea33293424" alt="SSD" class="w-full h-56 object-cover rounded-lg">
+                <h3 class="text-2xl font-bold mt-4 text-teal-600">SSD Samsung 1TB</h3>
+                <p class="text-gray-600 mt-2">Tốc độ đọc/ghi siêu nhanh, dung lượng lớn.</p>
+                <p class="text-xl font-semibold mt-3 text-green-600">2.900.000 VNĐ</p>
+                <button class="mt-4 w-full bg-gradient-to-r from-teal-500 to-teal-600 text-white py-3 rounded-lg hover:from-teal-600 hover:to-teal-700 transition flex items-center justify-center">
+                    <i class="fas fa-cart-plus mr-2"></i> Thêm vào giỏ
+                </button>
+            </div>
+            <!-- Product Card 5: Motherboard -->
+            <div class="product-card bg-white rounded-xl shadow-2xl p-6 relative transform hover:-translate-y-2 transition duration-500">
+                <div class="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">Hot</div>
+                <img src="https://images.unsplash.com/photo-1587202372583-49330a15584d" alt="Motherboard" class="w-full h-56 object-cover rounded-lg">
+                <h3 class="text-2xl font-bold mt-4 text-indigo-600">Mainboard ASUS ROG</h3>
+                <p class="text-gray-600 mt-2">Bo mạch chủ cao cấp cho game thủ.</p>
+                <p class="text-xl font-semibold mt-3 text-green-600">6.500.000 VNĐ</p>
+                <button class="mt-4 w-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white py-3 rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition flex items-center justify-center">
+                    <i class="fas fa-cart-plus mr-2"></i> Thêm vào giỏ
+                </button>
+            </div>
+            <!-- Product Card 6: PSU -->
+            <div class="product-card bg-white rounded-xl shadow-2xl p-6 relative transform hover:-translate-y-2 transition duration-500">
+                <img src="https://images.unsplash.com/photo-1624704964267-4d0f736d0a39" alt="PSU" class="w-full h-56 object-cover rounded-lg">
+                <h3 class="text-2xl font-bold mt-4 text-orange-600">Nguồn Corsair 750W</h3>
+                <p class="text-gray-600 mt-2">Nguồn ổn định, chứng nhận 80+ Gold.</p>
+                <p class="text-xl font-semibold mt-3 text-green-600">2.800.000 VNĐ</p>
+                <button class="mt-4 w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-lg hover:from-orange-600 hover:to-orange-700 transition flex items-center justify-center">
+                    <i class="fas fa-cart-plus mr-2"></i> Thêm vào giỏ
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Why Choose Us Section -->
+    <section class="bg-white py-12">
+        <div class="container mx-auto text-center">
+            <h2 class="text-4xl font-semibold text-indigo-800 mb-10">Tại Sao Chọn TechStore?</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                <div class="p-6">
+                    <i class="fas fa-shield-alt text-5xl text-blue-500 mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-800">Chất Lượng Đảm Bảo</h3>
+                    <p class="text-gray-600 mt-2">Sản phẩm chính hãng, bảo hành đầy đủ.</p>
+                </div>
+                <div class="p-6">
+                    <i class="fas fa-shipping-fast text-5xl text-green-500 mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-800">Giao Hàng Nhanh Chóng</h3>
+                    <p class="text-gray-600 mt-2">Giao hàng toàn quốc trong 24-48h.</p>
+                </div>
+                <div class="p-6">
+                    <i class="fas fa-headset text-5xl text-purple-500 mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-800">Hỗ Trợ 24/7</h3>
+                    <p class="text-gray-600 mt-2">Đội ngũ hỗ trợ luôn sẵn sàng.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-indigo-700 to-purple-700 text-white py-8">
+        <div class="container mx-auto text-center">
+            <h3 class="text-2xl font-bold mb-4">TechStore</h3>
+            <div class="flex justify-center space-x-6 mb-4">
+                <a href="#" class="text-yellow-300 hover:text-yellow-400 transition"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-yellow-300 hover:text-yellow-400 transition"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-yellow-300 hover:text-yellow-400 transition"><i class="fab fa-instagram"></i></a>
+            </div>
+            <p class="text-sm">© 2025 TechStore. All rights reserved.</p>
+            <p class="text-sm mt-2">Liên hệ: contact@techstore.vn | Hotline: 0123 456 789</p>
+        </div>
+    </footer>
+
+    <script>
+        // JavaScript for button click alert
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', () => {
+                alert('Sản phẩm đã được thêm vào giỏ hàng!');
+            });
+        });
+    </script>
+</body>
+</html>
