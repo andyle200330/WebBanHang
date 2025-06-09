@@ -9,7 +9,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'DOCKER_BUILDKIT=1 docker build -t my-image:latest .'
+                    sh 'docker build -t my-image:latest .'
                 }
             }
         }
