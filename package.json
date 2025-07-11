@@ -1,0 +1,10 @@
+{
+  "name": "webbanhang",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "htmlhint index.html"
+  },
+  "devDependencies": {
+    "htmlhint": "^1.1.4"
+  }
+}
