@@ -4,11 +4,11 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/1sGu7/WebBanHang.git', branch: 'main'
+                git url: 'https://github.com/andyle200330/WebBanHang.git', branch: 'main'
             }
         }
 
-        stage('Install Node & Run Test') {
+        stage('Run HTML Test') {
             steps {
                 sh '''
                     npm install
@@ -19,28 +19,22 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh 'docker build -t my-image:latest .'
-                }
+                sh 'docker build -t my-image:latest .'
             }
         }
 
         stage('Stop Existing Container') {
             steps {
-                script {
-                    sh '''
-                        docker ps -q --filter "name=web_banhang" | xargs -r docker stop || true
-                        docker ps -a -q --filter "name=web_banhang" | xargs -r docker rm || true
-                    '''
-                }
+                sh '''
+                    docker ps -q --filter "name=web_banhang" | xargs -r docker stop || true
+                    docker ps -a -q --filter "name=web_banhang" | xargs -r docker rm || true
+                '''
             }
         }
 
         stage('Run Docker Container') {
             steps {
-                script {
-                    sh 'docker run -d -p 8081:80 --name web_banhang my-image:latest'
-                }
+                sh 'docker run -d -p 8081:80 --name web_banhang my-image:latest'
             }
         }
     }
