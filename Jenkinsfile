@@ -11,8 +11,6 @@ pipeline {
         stage('Install Node & Run Test') {
             steps {
                 sh '''
-                    curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-                    apt-get install -y nodejs
                     npm install
                     npm test
                 '''
